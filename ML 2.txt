@@ -1,0 +1,69 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+df = pd.read_csv('emails.csv')
+df.head()
+
+df.tail()
+
+df.isnull().sum()
+
+df.dropna(how='any',inplace=True)
+
+Excluding prediction column  = x
+Including prediction column = y
+(Only values of columns are taken and  stored in array)
+
+x = df.iloc[:,1:-1].values
+y = df.iloc[:,-1].values
+
+from sklearn.model_selection import train_test_split
+x_train,x_test,y_train,y_test = train_test_split(x,y,test_size=0.25,random_state=10)
+
+from sklearn.metrics import ConfusionMatrixDisplay,confusion_matrix,accuracy_score,precision_score,recall_score,plot_precision_recall_curve,plot_roc_curve
+def report(classifier):
+ y_pred = classifier.predict(x_test)
+ cm = confusion_matrix(y_test,y_pred)
+ display = ConfusionMatrixDisplay(cm,display_labels=classifier.classes_)
+ display.plot()
+ print(f"Accuracy: {accuracy_score(y_test,y_pred)}")
+ print(f"Precision Score: {precision_score(y_test,y_pred)}")
+ print(f"Recall Score: {recall_score(y_test,y_pred)}")
+ plot_precision_recall_curve(classifier,x_test,y_test)
+ plot_roc_curve(classifier,x_test,y_test)
+
+
+K-Nearest Neighbours Classifier
+
+CONFUSION MATRIX
+
+TP || FP
+--------
+FN || TN
+
+Accuracy = TP + TN / TP + FP + TN+ FN
+PRECISION = TP / TP + FP
+RECALL = TP / TP + FN
+
+from sklearn.neighbors import KNeighborsClassifier
+
+kNN = KNeighborsClassifier(n_neighbors=10)
+kNN.fit(x_train,y_train)
+
+report(kNN)
+
+The gamma parameter is set to 'auto', which means the algorithm will use the default value for the gamma parameter. The random_state parameter is set to 10 to ensure reproducibility, meaning that if you run the same code multiple times with the same data, you'll get the same results.
+
+This line trains the SVM classifier on the training data. The fit method takes two arguments: x_train, which represents the input features (training data), and y_train, which represents the target values or labels corresponding to the training data.
+
+from sklearn.svm import SVC
+svm = SVC(gamma='auto',random_state=10)
+svm.fit(x_train,y_train)
+
+report(svm)
+
+plot_roc_curve(classifier, x_test, y_test): This line plots the ROC curve (Receiver Operating Characteristic curve), which illustrates the trade-off between true positive rate (sensitivity) and false positive rate at different classification thresholds.
+
+ This line plots the precision-recall curve, which shows the trade-off between precision and recall at different probability thresholds.
+
